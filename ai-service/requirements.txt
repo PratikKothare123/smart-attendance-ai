@@ -1,9 +1,7 @@
 deepface==0.0.79
-tensorflow==2.12.0
-keras==2.12.0
-numpy==1.23.5
-pandas==1.5.3
-opencv-python==4.7.0.72
-mtcnn==0.1.1
+opencv-python-headless
+numpy
+pandas
+mtcnn
 flask
 gunicorn
