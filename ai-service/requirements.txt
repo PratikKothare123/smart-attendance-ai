@@ -1,6 +1,7 @@
 deepface==0.0.79
+tensorflow==2.10.1
 opencv-python-headless
-numpy
+numpy==1.23.5
 pandas
 mtcnn
 flask
