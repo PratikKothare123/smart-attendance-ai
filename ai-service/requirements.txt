@@ -1,0 +1,6 @@
+deepface
+tf-keras
+fastapi
+uvicorn
+pillow
+numpy

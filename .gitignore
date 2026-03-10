@@ -1,0 +1,26 @@
+# node modules
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# environment variables
+.env
+backend/.env
+frontend/.env
+
+# logs
+logs
+*.log
+
+# build files
+build/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+ai-service/venv/
+
+# OS files
+.DS_Store
+Thumbs.db
