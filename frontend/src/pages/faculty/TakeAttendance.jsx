@@ -40,8 +40,8 @@ export default function TakeAttendance(){
           <div style={{color:C.muted,fontSize:14}}>Step 1 of 3 — Select subject & time slot</div>
         </div>
 
-        {/* Steps indicator */}
-        <div style={{display:'flex',alignItems:'center',gap:0,marginBottom:28,maxWidth:480}}>
+        {/* Steps indicator - hide on small mobile */}
+        <div className="hide-on-mobile" style={{display:'flex',alignItems:'center',gap:0,marginBottom:28,maxWidth:480}}>
           {['Select Subject','Scan Faces','Summary'].map((s,i)=>(
             <>
               <div key={s} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
@@ -54,7 +54,7 @@ export default function TakeAttendance(){
           ))}
         </div>
 
-        <div style={{maxWidth:520}}>
+        <div style={{maxWidth:520, width: '100%'}}>
           <Alert type="error" msg={err}/>
           <Card style={{padding:28}}>
             <div style={{fontWeight:700,fontSize:15,marginBottom:18}}>Session Details</div>
@@ -62,7 +62,7 @@ export default function TakeAttendance(){
               value={selIdx} onChange={e=>setSelIdx(e.target.value)} required/>
             {sel&&(
               <div style={{background:'#f0f4ff',borderRadius:10,padding:14,marginBottom:14,
-                display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,fontSize:13}}>
+                display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:8,fontSize:13}}>
                 <div><span style={{color:C.muted}}>Subject:</span> <strong>{sel.subjectName}</strong></div>
                 <div><span style={{color:C.muted}}>Code:</span> <strong>{sel.code||'—'}</strong></div>
                 <div><span style={{color:C.muted}}>Year:</span> <strong>{sel.year}</strong></div>

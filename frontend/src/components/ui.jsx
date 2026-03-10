@@ -1,11 +1,74 @@
 // ── Shared UI primitives ──────────────────────────────────────────────────────
 import React, { useState, useEffect } from 'react';
 
+// Responsive styles for desktop/mobile toggles
+const responsiveStyles = `
+  @media (max-width: 768px) {
+    .desktop-only { display: none !important; }
+    .mobile-only { display: block !important; }
+    .hide-on-mobile { display: none !important; }
+  }
+  @media (min-width: 769px) {
+    .desktop-only { display: block !important; }
+    .mobile-only { display: none !important; }
+    .show-on-mobile { display: none !important; }
+  }
+  
+  /* Mobile card view for tables */
+  .mobile-card-view {
+    display: none;
+  }
+  @media (max-width: 768px) {
+    .mobile-card-view {
+      display: block;
+    }
+    .desktop-table-view {
+      display: none;
+    }
+  }
+  @media (min-width: 769px) {
+    .mobile-card-view {
+      display: none;
+    }
+    .desktop-table-view {
+      display: block;
+    }
+  }
+  
+  /* LiveScan responsive layout */
+  @media (min-width: 1024px) {
+    .live-scan-container {
+      grid-template-columns: 1fr 350px !important;
+      padding: 24px !important;
+      gap: 20px !important;
+    }
+  }
+  @media (min-width: 769px) and (max-width: 1023px) {
+    .live-scan-container {
+      grid-template-columns: 1fr 280px !important;
+      padding: 20px !important;
+      gap: 16px !important;
+    }
+  }
+  
+  /* Admin Faculty Grid */
+  @media (min-width: 1024px) {
+    .admin-faculty-grid {
+      grid-template-columns: 380px 1fr !important;
+    }
+  }
+`;
+
 export const C = {
   primary:'#1a56db', primaryDark:'#1e429f', primaryLight:'#e8f0fe',
   accent:'#0ea5e9', success:'#16a34a', warning:'#d97706', danger:'#dc2626',
   bg:'#f0f4ff', text:'#0f172a', muted:'#64748b', border:'#e2e8f0',
 };
+
+// Inject responsive styles
+export function ResponsiveStyles() {
+  return <style>{responsiveStyles}</style>;
+}
 
 export const DEPTS   = ['CSE','ECE','ME','CE','EEE','IT'];
 export const YEARS   = ['1st Year','2nd Year','3rd Year','4th Year'];
@@ -23,6 +86,17 @@ function useIsMobile() {
     return () => window.removeEventListener('resize', handle);
   }, []);
   return isMobile;
+}
+
+function useIsTablet() {
+  const [isTablet, setIsTablet] = useState(typeof window !== 'undefined' ? window.innerWidth > 768 && window.innerWidth <= 1024 : false);
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handle = () => setIsTablet(window.innerWidth > 768 && window.innerWidth <= 1024);
+    window.addEventListener('resize', handle);
+    return () => window.removeEventListener('resize', handle);
+  }, []);
+  return isTablet;
 }
 
 export function Card({ children, style={} }){
@@ -48,7 +122,7 @@ export function Badge({ color='blue', children }){
   return <span style={{background:s.bg,color:s.c,padding:'2px 10px',borderRadius:99,fontSize:12,fontWeight:600}}>{children}</span>;
 }
 
-export function Btn({ children, onClick, variant='primary', size='md', style={}, disabled=false, loading=false, type='button' }){
+export function Btn({ children, onClick, variant='primary', size='md', style={}, disabled=false, loading=false, type='button', fullWidth=false }){
   const v={
     primary:{background:C.primary,color:'#fff',border:'none'},
     outline:{background:'transparent',color:C.primary,border:`1.5px solid ${C.primary}`},
@@ -66,22 +140,30 @@ export function Btn({ children, onClick, variant='primary', size='md', style={},
   return(
     <button type={type} onClick={onClick} disabled={disabled||loading} style={{
       ...v[variant],...sz[size],borderRadius:8,fontWeight:600,cursor:(disabled||loading)?'not-allowed':'pointer',
-      fontFamily:'inherit',opacity:(disabled||loading)?0.6:1,transition:'all .15s',width: isMobile ? '100%' : 'auto',...style}}>
+      fontFamily:'inherit',opacity:(disabled||loading)?0.6:1,transition:'all .15s',
+      width: (fullWidth || isMobile) ? '100%' : 'auto',
+      display: (fullWidth || isMobile) ? 'block' : 'inline-block',
+      ...style}}>
       {loading?'⏳ Please wait...':children}
     </button>
   );
 }
 
 export function Inp({ label,type='text',value,onChange,placeholder,required,options,disabled,name }){
+  const isMobile = useIsMobile();
   const base={width:'100%',padding:'10px 14px',borderRadius:8,border:`1.5px solid ${C.border}`,
-    fontSize:14,outline:'none',boxSizing:'border-box',background:'#fafbff',fontFamily:'inherit',color:C.text};
+    fontSize:14,outline:'none',boxSizing:'border-box',background:'#fafbff',fontFamily:'inherit',color:C.text,
+    minHeight: isMobile ? '44px' : 'auto'};
   return(
     <div style={{marginBottom:14}}>
       {label&&<label style={{display:'block',fontSize:13,fontWeight:600,marginBottom:4,color:C.text}}>
         {label}{required&&<span style={{color:C.danger}}> *</span>}
       </label>}
       {options
-        ?<select value={value} onChange={onChange} disabled={disabled} name={name} style={{...base,color:value?C.text:C.muted}}>
+        ?<select value={value} onChange={onChange} disabled={disabled} name={name} style={{
+            ...base,color:value?C.text:C.muted,
+            width: '100%', maxWidth: '100%'
+          }}>
           <option value="">{placeholder||`Select ${label}`}</option>
           {options.map(o=><option key={o.value??o} value={o.value??o}>{o.label??o}</option>)}
         </select>
@@ -102,13 +184,34 @@ export function StatCard({ icon,label,value,sub,color=C.primary }){
   const isMobile = useIsMobile();
   return(
     <Card style={{padding: isMobile ? '16px' : '20px 24px',display:'flex',gap: isMobile ? 12 : 16,alignItems:'center'}}>
-      <div style={{width: isMobile ? 40 : 48,height: isMobile ? 40 : 48,borderRadius: isMobile ? 10 : 12,background:`${color}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize: isMobile ? 18 : 22}}>{icon}</div>
-      <div>
+      <div style={{width: isMobile ? 40 : 48,height: isMobile ? 40 : 48,borderRadius: isMobile ? 10 : 12,background:`${color}18`,display:'flex',alignItems:'center',justifyContent:'center',fontSize: isMobile ? 18 : 22,flexShrink:0}}>{icon}</div>
+      <div style={{minWidth: 0}}>
         <div style={{fontSize: isMobile ? 20 : 24,fontWeight:700}}>{value}</div>
         <div style={{fontSize: isMobile ? 12 : 13,color:C.muted}}>{label}</div>
         {sub&&<div style={{fontSize:12,color,marginTop:2}}>{sub}</div>}
       </div>
     </Card>
+  );
+}
+
+// Responsive Grid Component
+export function Grid({ children, columns=3, gap=16, style={} }) {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  
+  let cols = columns;
+  if (isMobile) cols = 1;
+  else if (isTablet) cols = Math.min(2, columns);
+  
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${cols}, 1fr)`,
+      gap: isMobile ? 12 : gap,
+      ...style
+    }}>
+      {children}
+    </div>
   );
 }
 

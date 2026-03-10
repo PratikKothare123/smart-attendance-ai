@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Layout } from '../../components/Layout';
-import { C, Card, Badge, Bar, Spinner, PageWrap, StatCard } from '../../components/ui';
+import { C, Card, Badge, Bar, Spinner, PageWrap, StatCard, Grid } from '../../components/ui';
 import { useAuth } from '../../context/AuthContext';
 import * as api from '../../api';
 
@@ -25,12 +25,12 @@ export default function MyAttendance(){
         </div>
 
         {loading ? <Spinner/> : <>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:24}}>
+          <Grid columns={4} gap={14} style={{marginBottom:24}}>
             <StatCard icon="📚" label="Subjects" value={att.length} color={C.primary}/>
             <StatCard icon="📈" label="Avg Attendance" value={`${avg}%`} color={avg>=75?C.success:C.danger}/>
             <StatCard icon="✅" label="Subjects Safe" value={att.filter(x=>x.percentage>=75).length} color={C.success}/>
             <StatCard icon="⚠️" label="Below 75%" value={att.filter(x=>x.percentage<75).length} color={C.warning}/>
-          </div>
+          </Grid>
 
           {att.length===0
             ? <Card style={{padding:48,textAlign:'center'}}>
@@ -41,35 +41,64 @@ export default function MyAttendance(){
                 <div style={{padding:'14px 20px',borderBottom:`1px solid ${C.border}`,fontWeight:700,fontSize:15}}>
                   Subject-wise Breakdown
                 </div>
-                {att.map((s,i)=>(
-                  <div key={s.subject} style={{display:'grid',gridTemplateColumns:'1fr 80px 80px 80px 160px 100px',
-                    alignItems:'center',gap:12,padding:'14px 20px',
-                    borderBottom:i<att.length-1?`1px solid ${C.border}`:'none',
-                    background:s.percentage<60?'#fff5f5':s.percentage<75?'#fffbeb':'#fff'}}>
-                    <div>
-                      <div style={{fontWeight:700,fontSize:14}}>{s.subject}</div>
-                      <div style={{fontSize:12,color:C.muted}}>{user?.semester}</div>
+                {/* Desktop table view */}
+                <div className="desktop-table-view">
+                  {att.map((s,i)=>(
+                    <div key={s.subject} style={{display:'grid',gridTemplateColumns:'1fr 80px 80px 80px 160px 100px',
+                      alignItems:'center',gap:12,padding:'14px 20px',
+                      borderBottom:i<att.length-1?`1px solid ${C.border}`:'none',
+                      background:s.percentage<60?'#fff5f5':s.percentage<75?'#fffbeb':'#fff'}}>
+                      <div>
+                        <div style={{fontWeight:700,fontSize:14}}>{s.subject}</div>
+                        <div style={{fontSize:12,color:C.muted}}>{user?.semester}</div>
+                      </div>
+                      <div style={{textAlign:'center'}}>
+                        <div style={{fontWeight:700,fontSize:16}}>{s.total}</div>
+                        <div style={{fontSize:11,color:C.muted}}>Total</div>
+                      </div>
+                      <div style={{textAlign:'center'}}>
+                        <div style={{fontWeight:700,fontSize:16,color:C.success}}>{s.present}</div>
+                        <div style={{fontSize:11,color:C.muted}}>Present</div>
+                      </div>
+                      <div style={{textAlign:'center'}}>
+                        <div style={{fontWeight:700,fontSize:16,color:C.danger}}>{s.absent}</div>
+                        <div style={{fontSize:11,color:C.muted}}>Absent</div>
+                      </div>
+                      <Bar pct={s.percentage}/>
+                      <div style={{textAlign:'right'}}>
+                        <Badge color={s.percentage>=75?'green':s.percentage>=60?'yellow':'red'}>
+                          {s.percentage>=75?'✓ Safe':s.percentage>=60?'Low':'⚠ Critical'}
+                        </Badge>
+                      </div>
                     </div>
-                    <div style={{textAlign:'center'}}>
-                      <div style={{fontWeight:700,fontSize:16}}>{s.total}</div>
-                      <div style={{fontSize:11,color:C.muted}}>Total</div>
+                  ))}
+                </div>
+                {/* Mobile card view */}
+                <div className="mobile-card-view">
+                  {att.map((s,i)=>(
+                    <div key={s.subject} style={{
+                      padding:'14px 16px',
+                      borderBottom:i<att.length-1?`1px solid ${C.border}`:'none',
+                      background:s.percentage<60?'#fff5f5':s.percentage<75?'#fffbeb':'#fff'
+                    }}>
+                      <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+                        <div>
+                          <div style={{fontWeight:700,fontSize:14}}>{s.subject}</div>
+                          <div style={{fontSize:12,color:C.muted}}>{user?.semester}</div>
+                        </div>
+                        <Badge color={s.percentage>=75?'green':s.percentage>=60?'yellow':'red'}>
+                          {s.percentage>=75?'✓ Safe':s.percentage>=60?'Low':'⚠ Critical'}
+                        </Badge>
+                      </div>
+                      <div style={{display:'flex',gap:16, marginBottom:10}}>
+                        <div><span style={{fontWeight:700,fontSize:14}}>{s.total}</span><span style={{fontSize:11,color:C.muted,marginLeft:4}}>Total</span></div>
+                        <div><span style={{fontWeight:700,fontSize:14,color:C.success}}>{s.present}</span><span style={{fontSize:11,color:C.muted,marginLeft:4}}>Present</span></div>
+                        <div><span style={{fontWeight:700,fontSize:14,color:C.danger}}>{s.absent}</span><span style={{fontSize:11,color:C.muted,marginLeft:4}}>Absent</span></div>
+                      </div>
+                      <Bar pct={s.percentage}/>
                     </div>
-                    <div style={{textAlign:'center'}}>
-                      <div style={{fontWeight:700,fontSize:16,color:C.success}}>{s.present}</div>
-                      <div style={{fontSize:11,color:C.muted}}>Present</div>
-                    </div>
-                    <div style={{textAlign:'center'}}>
-                      <div style={{fontWeight:700,fontSize:16,color:C.danger}}>{s.absent}</div>
-                      <div style={{fontSize:11,color:C.muted}}>Absent</div>
-                    </div>
-                    <Bar pct={s.percentage}/>
-                    <div style={{textAlign:'right'}}>
-                      <Badge color={s.percentage>=75?'green':s.percentage>=60?'yellow':'red'}>
-                        {s.percentage>=75?'✓ Safe':s.percentage>=60?'Low':'⚠ Critical'}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </Card>
           }
 

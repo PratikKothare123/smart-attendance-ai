@@ -32,8 +32,25 @@ export default function LiveScan(){
 
   useEffect(()=>{
     const initCamera = async () => {
+      // Check if mediaDevices is supported
+      if (!navigator.mediaDevices) {
+        setCamErr('❌ Camera not supported on this device. Please use a modern browser (Chrome, Safari, Firefox) on HTTPS.');
+        return;
+      }
+      // Check for secure context (HTTPS required for camera)
+      if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        setCamErr('❌ Camera requires HTTPS. Please access this page via a secure connection.');
+        return;
+      }
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video:{ width:640,height:480,facingMode:'user' } });
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 640 }, 
+            height: { ideal: 480 }, 
+            aspectRatio: 4/3,
+            facingMode: 'user' 
+          } 
+        });
         streamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -45,11 +62,13 @@ export default function LiveScan(){
       } catch(e){ 
         let msg = 'Camera access denied. ';
         if(e.name === 'NotAllowedError') {
-          msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar and select "Allow", then refresh.';
+          msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar and select "Allow", then refresh. On mobile, check your browser settings to allow camera access.';
         } else if(e.name === 'NotFoundError') {
-          msg = '❌ No camera found! Please connect a webcam.';
+          msg = '❌ No camera found! Please connect a webcam or grant camera permission to your browser. On mobile, make sure no other app is using the camera.';
         } else if(e.name === 'NotReadableError') {
-          msg = '❌ Camera in use! Close other apps (Zoom, Teams, etc.) and refresh.';
+          msg = '❌ Camera in use! Close other apps (Zoom, Teams, Camera app, etc.) and refresh.';
+        } else if(e.name === 'OverconstrainedError') {
+          msg = '❌ Camera settings not supported. Please try a different browser or device.';
         } else {
           msg = `❌ Camera error: ${e.message}`;
         }
@@ -61,8 +80,25 @@ export default function LiveScan(){
   },[]);
 
   const startCam = async ()=>{
+    // Check if mediaDevices is supported
+    if (!navigator.mediaDevices) {
+      setCamErr('❌ Camera not supported on this device. Please use a modern browser (Chrome, Safari, Firefox) on HTTPS.');
+      return;
+    }
+    // Check for secure context (HTTPS required for camera)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      setCamErr('❌ Camera requires HTTPS. Please access this page via a secure connection.');
+      return;
+    }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video:{ width:640,height:480,facingMode:'user' } });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          width: { ideal: 640 }, 
+          height: { ideal: 480 }, 
+          aspectRatio: 4/3,
+          facingMode: 'user' 
+        } 
+      });
       streamRef.current = stream;
       if(videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -71,11 +107,13 @@ export default function LiveScan(){
     } catch(e){ 
       let msg = 'Camera access denied. ';
       if(e.name === 'NotAllowedError') {
-        msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar and select "Allow", then refresh.';
+        msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar and select "Allow", then refresh. On mobile, check your browser settings to allow camera access.';
       } else if(e.name === 'NotFoundError') {
-        msg = '❌ No camera found! Please connect a webcam.';
+        msg = '❌ No camera found! Please connect a webcam or grant camera permission to your browser. On mobile, make sure no other app is using the camera.';
       } else if(e.name === 'NotReadableError') {
-        msg = '❌ Camera in use! Close other apps (Zoom, Teams, etc.) and refresh.';
+        msg = '❌ Camera in use! Close other apps (Zoom, Teams, Camera app, etc.) and refresh.';
+      } else if(e.name === 'OverconstrainedError') {
+        msg = '❌ Camera settings not supported. Please try a different browser or device.';
       } else {
         msg = `❌ Camera error: ${e.message}`;
       }
@@ -149,9 +187,16 @@ export default function LiveScan(){
 
   return(
     <Layout title="Live Attendance Scan">
-      <div style={{padding:24,display:'grid',gridTemplateColumns:'1fr 350px',gap:20,alignItems:'start'}}>
+      <div style={{
+        padding: 16, 
+        display: 'grid', 
+        gridTemplateColumns: '1fr', 
+        gap: 16, 
+        alignItems: 'start',
+        width: '100%'
+      }} className="live-scan-container">
         {/* Camera */}
-        <div>
+        <div style={{width: '100%'}}>
           <div style={{marginBottom:14}}>
             <div style={{fontSize:20,fontWeight:800}}>📷 Live Camera Scan</div>
             <div style={{color:C.muted,fontSize:13}}>
@@ -159,8 +204,8 @@ export default function LiveScan(){
             </div>
           </div>
           <Alert type="error" msg={camErr}/>
-          <Card style={{overflow:'hidden'}}>
-            <div style={{background:'#0a0f1e',position:'relative',aspectRatio:'4/3'}}>
+          <Card style={{overflow:'hidden', padding: 0}}>
+            <div style={{background:'#0a0f1e',position:'relative',aspectRatio:'4/3', width: '100%'}}>
               <video 
                 ref={videoRef} 
                 autoPlay 
@@ -200,7 +245,7 @@ export default function LiveScan(){
           </Card>
 
           {/* Progress bar */}
-          <div style={{marginTop:14,background:'#fff',borderRadius:10,padding:'14px 18px',border:`1px solid ${C.border}`}}>
+          <div style={{marginTop:14,background:'#fff',borderRadius:10,padding:'14px 18px',border:`1px solid ${C.border}`, width: '100%', boxSizing: 'border-box'}}>
             <div style={{display:'flex',justifyContent:'space-between',fontSize:13,marginBottom:8}}>
               <span style={{fontWeight:600}}>Session Progress</span>
               <span style={{fontWeight:700,color:C.primary}}>{present.length} / {total} students</span>
@@ -213,7 +258,7 @@ export default function LiveScan(){
         </div>
 
         {/* Present list */}
-        <div>
+        <div style={{width: '100%'}}>
           <div style={{fontWeight:700,fontSize:15,marginBottom:12}}>
             ✅ Present Students ({present.length})
           </div>

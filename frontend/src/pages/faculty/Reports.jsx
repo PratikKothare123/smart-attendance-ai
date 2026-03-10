@@ -40,7 +40,7 @@ export default function Reports(){
           <div style={{color:C.muted,fontSize:14}}>View and download subject-wise attendance</div>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'340px 1fr',gap:20,alignItems:'start'}}>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(300px, 1fr))',gap:20,alignItems:'start'}}>
           <Card style={{padding:22}}>
             <div style={{fontWeight:700,fontSize:14,marginBottom:14}}>🔍 Select Subject</div>
             <Alert type="error" msg={err}/>
@@ -54,29 +54,30 @@ export default function Reports(){
                 <div><span style={{color:C.muted}}>Department:</span> <strong>{sel.department}</strong></div>
               </div>
             )}
-            <Btn onClick={load} loading={loading} disabled={!sel} style={{width:'100%'}}>Load Report</Btn>
+            <Btn onClick={load} loading={loading} disabled={!sel} fullWidth>Load Report</Btn>
             {report&&(
-              <Btn onClick={downloadExcel} variant="success" style={{width:'100%',marginTop:10}}>
+              <Btn onClick={downloadExcel} variant="success" fullWidth style={{marginTop:10}}>
                 📥 Download Excel (.xlsx)
               </Btn>
             )}
           </Card>
 
           <div>
-            {!report
-              ? <Card style={{padding:56,textAlign:'center'}}>
-                  <div style={{fontSize:42,marginBottom:10}}>📊</div>
-                  <div style={{color:C.muted,fontSize:14}}>Select a subject and click "Load Report"</div>
-                </Card>
-              : <>
-                <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:14,marginBottom:16}}>
+            {!report ? (
+              <Card style={{padding:56,textAlign:'center'}}>
+                <div style={{fontSize:42,marginBottom:10}}>📊</div>
+                <div style={{color:C.muted,fontSize:14}}>Select a subject and click "Load Report"</div>
+              </Card>
+            ) : (
+              <>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))',gap:14,marginBottom:16}}>
                   <StatCard icon="🎯" label="Total Sessions" value={report.totalSessions} color={C.primary}/>
                   <StatCard icon="👥" label="Students"       value={report.report?.length||0} color={C.accent}/>
                   <StatCard icon="✅" label="≥75% (Safe)"   value={safeCount}      color={C.success}/>
                   <StatCard icon="⚠️" label="<60% Critical" value={criticalCount}  color={C.danger}/>
                 </div>
                 <Card>
-                  <div style={{padding:'14px 20px',borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                  <div style={{padding:'14px 20px',borderBottom:`1px solid ${C.border}`,display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
                     <div style={{fontWeight:700}}>{report.subject} — Sec {report.section} · {report.year}</div>
                     <span style={{fontSize:12,color:C.muted}}>{report.totalSessions} sessions</span>
                   </div>
@@ -101,10 +102,11 @@ export default function Reports(){
                   />
                 </Card>
               </>
-            }
+            )}
           </div>
         </div>
       </PageWrap>
     </Layout>
   );
 }
+

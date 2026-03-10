@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '../../components/Layout';
-import { C, Card, Inp, Btn, Alert, Table, Td, Spinner, PageWrap, DEPTS, YEARS, SEMS, SECS } from '../../components/ui';
+import { C, Card, Inp, Btn, Alert, Table, Td, Spinner, PageWrap, DEPTS, YEARS, SEMS, SECS, Grid } from '../../components/ui';
 import * as api from '../../api';
 
 export default function AdminSubjects(){
@@ -47,7 +47,7 @@ export default function AdminSubjects(){
     <Layout title="Subjects & Assignment">
       <PageWrap>
         <div style={{marginBottom:20}}><div style={{fontSize:20,fontWeight:800}}>Subjects & Faculty Assignment</div></div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:20}}>
+        <div columns={2} gap={20} style={{marginBottom:20}}>
           {/* Add subject */}
           <Card style={{padding:22}}>
             <div style={{fontWeight:700,fontSize:14,marginBottom:14}}>➕ Add New Subject</div>

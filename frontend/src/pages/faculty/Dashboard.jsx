@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '../../components/Layout';
-import { C, Card, StatCard, Badge, Spinner, PageWrap } from '../../components/ui';
+import { C, Card, StatCard, Badge, Spinner, PageWrap, Grid } from '../../components/ui';
 import { useAuth } from '../../context/AuthContext';
 import * as api from '../../api';
 
@@ -25,28 +25,28 @@ export default function FacultyDashboard(){
           <div style={{color:C.muted,fontSize:14}}>{new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</div>
         </div>
 
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,marginBottom:24}}>
+        <Grid columns={3} gap={16} style={{marginBottom:24}}>
           <StatCard icon="📚" label="Assigned Subjects" value={subjects.length} color={C.primary}/>
           <StatCard icon="🎯" label="Sessions Today"   value={sessions.length} color={C.success}/>
           <StatCard icon="👥" label="Present Today"    value={totalPresent}   color={C.accent}/>
-        </div>
+        </Grid>
 
         {/* Quick Action */}
         <Card style={{padding:24,marginBottom:24,background:`linear-gradient(135deg,${C.primary}08,${C.accent}08)`,border:`1.5px solid ${C.primary}25`}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-            <div>
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <div style={{flex:1}}>
               <div style={{fontWeight:800,fontSize:16,marginBottom:4}}>📷 Start Taking Attendance</div>
               <div style={{color:C.muted,fontSize:13}}>Select subject → Open camera → Scan student faces → Done</div>
             </div>
             <Link to="/faculty/attendance" style={{textDecoration:'none'}}>
-              <span style={{background:C.primary,color:'#fff',padding:'11px 22px',borderRadius:10,fontWeight:700,fontSize:14,display:'inline-block'}}>
+              <span style={{background:C.primary,color:'#fff',padding:'11px 22px',borderRadius:10,fontWeight:700,fontSize:14,display:'inline-block', whiteSpace:'nowrap', width: 'fit-content'}}>
                 Take Attendance →
               </span>
             </Link>
           </div>
         </Card>
 
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20}}>
+        <Grid columns={2} gap={20} style={{marginBottom:24}}>
           {/* Assigned Subjects */}
           <Card>
             <div style={{padding:'16px 20px',borderBottom:`1px solid ${C.border}`,fontWeight:700,fontSize:15}}>My Subjects</div>
@@ -82,7 +82,7 @@ export default function FacultyDashboard(){
               ))
             }
           </Card>
-        </div>
+        </Grid>
       </PageWrap>
     </Layout>
   );

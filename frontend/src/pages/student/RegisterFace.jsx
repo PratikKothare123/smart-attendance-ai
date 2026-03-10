@@ -29,20 +29,37 @@ export default function RegisterFace(){
 
   const startCam = async () => {
     setCamErr('');
+    // Check if mediaDevices is supported
+    if (!navigator.mediaDevices) {
+      setCamErr('❌ Camera not supported on this device. Please use a modern browser (Chrome, Safari, Firefox) on HTTPS.');
+      return;
+    }
+    // Check for secure context (HTTPS required for camera)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      setCamErr('❌ Camera requires HTTPS. Please access this page via a secure connection.');
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        video:{ width:640, height:480, facingMode:'user' } 
+        video: { 
+          width: { ideal: 640 }, 
+          height: { ideal: 480 }, 
+          aspectRatio: 4/3,
+          facingMode: 'user' 
+        } 
       });
       streamRef.current = stream;
       setStep(2);
     } catch(e){
       let msg = 'Camera access denied. ';
       if(e.name === 'NotAllowedError') {
-        msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar (left of URL) and select "Allow", then refresh.';
+        msg = '❌ Camera blocked! Click the 🔴 camera icon in the browser address bar (left of URL) and select "Allow", then refresh. On mobile, check your browser settings to allow camera access.';
       } else if(e.name === 'NotFoundError') {
-        msg = '❌ No camera found! Please connect a webcam and try again.';
+        msg = '❌ No camera found! Please connect a webcam and try again. On mobile, make sure no other app is using the camera.';
       } else if(e.name === 'NotReadableError') {
-        msg = '❌ Camera in use! Close other apps using camera (Zoom, Teams, etc.) and refresh.';
+        msg = '❌ Camera in use! Close other apps using camera (Zoom, Teams, Camera app, etc.) and refresh.';
+      } else if(e.name === 'OverconstrainedError') {
+        msg = '❌ Camera settings not supported. Please try a different browser or device.';
       } else {
         msg = `❌ Camera error: ${e.message}`;
       }

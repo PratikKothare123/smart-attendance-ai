@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ResponsiveStyles } from './components/ui';
 
 // Auth pages
 import Login          from './pages/Login';
@@ -46,6 +47,7 @@ function Root(){
 export default function App(){
   return(
     <AuthProvider>
+      <ResponsiveStyles />
       <BrowserRouter>
         <Routes>
           {/* Public */}

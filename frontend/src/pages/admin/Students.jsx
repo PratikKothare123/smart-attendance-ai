@@ -22,13 +22,17 @@ export default function AdminStudents(){
           <div style={{fontSize:20,fontWeight:800}}>All Students</div>
           <div style={{color:C.muted,fontSize:14}}>Monitor student registrations and face status</div>
         </div>
-        <Card style={{padding:20,marginBottom:20}}>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr) auto',gap:12,alignItems:'end'}}>
-            <Inp label="Department" options={DEPTS} value={f.department} onChange={set('department')}/>
-            <Inp label="Year"       options={YEARS} value={f.year}       onChange={set('year')}/>
-            <Inp label="Semester"   options={SEMS}  value={f.semester}   onChange={set('semester')}/>
-            <Inp label="Section"    options={SECS}  value={f.section}    onChange={set('section')}/>
-            <Btn onClick={load} loading={loading} style={{marginBottom:14}}>Search</Btn>
+        <Card style={{padding:20,marginBottom:20,overflow:'visible'}}>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:10}}>
+              <Inp label="Department" options={DEPTS} value={f.department} onChange={set('department')}/>
+              <Inp label="Year"       options={YEARS} value={f.year}       onChange={set('year')}/>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(2, 1fr)',gap:10}}>
+              <Inp label="Semester"   options={SEMS}  value={f.semester}   onChange={set('semester')}/>
+              <Inp label="Section"    options={SECS}  value={f.section}    onChange={set('section')}/>
+            </div>
+            <Btn onClick={load} loading={loading}>Search</Btn>
           </div>
         </Card>
         {!searched
@@ -38,7 +42,7 @@ export default function AdminStudents(){
             </Card>
           : loading ? <Spinner/>
           : <Card>
-              <div style={{padding:'12px 20px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',fontSize:13}}>
+              <div style={{padding:'12px 20px',borderBottom:`1px solid ${C.border}`,display:'flex',justifyContent:'space-between',fontSize:13,flexWrap:'wrap',gap:8}}>
                 <strong>Results</strong>
                 <span style={{color:C.muted}}>{students.length} students · {students.filter(s=>s.faceRegistered).length} faces registered</span>
               </div>
@@ -64,3 +68,4 @@ export default function AdminStudents(){
     </Layout>
   );
 }
+
