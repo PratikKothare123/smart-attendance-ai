@@ -1,10 +1,10 @@
 deepface==0.0.87
-tf-keras
-tensorflow-cpu
+tensorflow==2.10.1
 opencv-python-headless
-numpy
+numpy==1.23.5
 pillow
-uvicorn[standard]
 fastapi
+uvicorn
 python-multipart
 gunicorn
+mtcnn
