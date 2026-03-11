@@ -1,8 +1,10 @@
-deepface==0.0.79
-tensorflow==2.10.1
+deepface==0.0.87
+tf-keras
+tensorflow-cpu
 opencv-python-headless
-numpy==1.23.5
-pandas
-mtcnn
-flask
+numpy
+pillow
+uvicorn[standard]
+fastapi
+python-multipart
 gunicorn
