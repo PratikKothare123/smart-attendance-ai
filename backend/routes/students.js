@@ -4,6 +4,8 @@ const Student = require('../models/Student');
 const { protect, facultyOnly } = require('../middleware/auth');
 const router  = express.Router();
 
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://localhost:5001';
+
 router.get('/', protect, async (req,res) => {
   try {
     const q={};
@@ -27,7 +29,7 @@ router.post('/face/encode', protect, async (req,res) => {
     if(!student) return res.status(404).json({ message:'Student not found' });
     if(req.user.role==='student' && req.user.usn!==usn.toUpperCase())
       return res.status(403).json({ message:'Forbidden' });
-    const aiRes = await axios.post(`${process.env.AI_SERVICE_URL}/encode-faces`,{ usn:usn.toUpperCase(), images },{ timeout:60000 });
+    const aiRes = await axios.post(`${AI_SERVICE_URL}/encode-faces`,{ usn:usn.toUpperCase(), images },{ timeout:60000 });
     if(!aiRes.data.encoding) return res.status(400).json({ message: aiRes.data.message||'No face detected' });
     student.faceEncoding=aiRes.data.encoding; student.faceImages=images.slice(0,3); student.faceRegistered=true;
     await student.save();
@@ -45,7 +47,7 @@ router.post('/face/recognize', protect, facultyOnly, async (req,res) => {
     const students = await Student.find({ year,semester,section,department,faceRegistered:true }).select('usn name faceEncoding');
     if(!students.length) return res.status(400).json({ message:'No students with registered faces in this section.' });
     const known = students.map(s=>({ usn:s.usn, name:s.name, encoding:s.faceEncoding }));
-    const aiRes = await axios.post(`${process.env.AI_SERVICE_URL}/recognize`,{ image, known_faces:known },{ timeout:20000 });
+    const aiRes = await axios.post(`${AI_SERVICE_URL}/recognize`,{ image, known_faces:known },{ timeout:20000 });
     res.json(aiRes.data);
   } catch(e){
     if(e.code==='ECONNREFUSED') return res.status(503).json({ message:'AI service offline.' });
