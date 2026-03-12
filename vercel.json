@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
+    {
+      "source": "/api/(.*)",
+      "destination": "https://smart-attendance-ai-1.onrender.com/api/$1"
+    }
   ]
 }
