@@ -4,7 +4,14 @@ const mongoose = require('mongoose');
 const cors     = require('cors');
 const app      = express();
 
-app.use(cors({ origin: ['http://localhost:3000','http://127.0.0.1:3000'], credentials: true }));
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://smart-attendance-ai.vercel.app' // your frontend domain
+  ],
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
