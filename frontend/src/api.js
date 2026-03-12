@@ -1,11 +1,9 @@
 import axios from 'axios';
 
-const api = axios.create({ baseURL: '/api' });
-
-// For local development, use relative paths. For production on Vercel, 
-// the vercel.json will proxy /api requests to your backend URL.
-// If needed, you can set the baseURL explicitly:
-// const api = axios.create({ baseURL: process.env.REACT_APP_API_URL || '/api' });
+// Production-ready API config: uses REACT_APP_API_URL env (Vercel) or '/api' (local proxy)
+const api = axios.create({ 
+  baseURL: process.env.REACT_APP_API_URL || '/api' 
+});
 
 api.interceptors.request.use(cfg => {
   const t = localStorage.getItem('sa_token');
