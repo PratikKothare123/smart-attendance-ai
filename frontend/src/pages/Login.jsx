@@ -84,7 +84,7 @@ export default function Login(){
             </div>
           )}
           <div style={{marginTop:22,padding:'12px',background:'#f8fafc',borderRadius:8,fontSize:11,color:C.muted}}>
-            <strong>Admin default:</strong> admin@sbjain.edu / Admin@123
+            
           </div>
         </div>
       </div>
