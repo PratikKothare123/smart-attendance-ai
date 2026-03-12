@@ -9,7 +9,7 @@ app.use(cors({
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'https://smart-attendance-ai.vercel.app',
-    'https://smart-attendance-ai-*.vercel.app',
+'https://smart-attendance-ai-git-main-pratiks-projects-7b933d8c.vercel.app', 'https://smart-attendance-ai-*.vercel.app',
     'https://smart-attendance-ai-1.vercel.app' // update with your exact domain
   ],
   credentials: true
