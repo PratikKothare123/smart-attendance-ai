@@ -200,5 +200,10 @@ uvicorn main:app --reload --port 8000
 
 ---
 
-**Built with ❤️ using latest AI & Cloud tech**
+---
+
+<p align="center">
+  Built with ❤️ by <a href="https://www.instagram.com/pratik_kothare27/">Pratik Kothare</a> <br>
+  <b>Computer Science Student</b>
+</p>
 
