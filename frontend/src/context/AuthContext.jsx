@@ -10,7 +10,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const t = localStorage.getItem('sa_token');
     const u = localStorage.getItem('sa_user');
-    if (t && u) { setToken(t); setUser(JSON.parse(u)); }
+    if (t && u && u !== 'undefined') { 
+      try {
+        setUser(JSON.parse(u)); 
+        setToken(t);
+      } catch (e) {
+        localStorage.removeItem('sa_token');
+        localStorage.removeItem('sa_user');
+      }
+    } else if (u === 'undefined') {
+      localStorage.removeItem('sa_token');
+      localStorage.removeItem('sa_user');
+    }
     setLoading(false);
   }, []);
 
