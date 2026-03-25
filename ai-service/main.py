@@ -145,7 +145,7 @@ if __name__ == '__main__':
     dummy_img = np.zeros((100, 100, 3), dtype=np.uint8)
     dummy_rgb = cv2.cvtColor(dummy_img, cv2.COLOR_BGR2RGB)
     face_recognition.face_encodings(dummy_rgb, model=MODEL)
-    log.info("✅ Model loaded. Listening on 0.0.0.0:5000")
+    log.info("✅ Model loaded. Listening on 0.0.0.0:5001")
     
     # ✅ Flask host fix for EC2
-    app.run(host="0.0.0.0", port=5000, debug=False, threaded=True)
+    app.run(host="0.0.0.0", port=5001, debug=False, threaded=True)
