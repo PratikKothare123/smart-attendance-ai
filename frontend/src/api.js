@@ -11,6 +11,10 @@ api.interceptors.request.use(cfg => {
   return cfg;
 });
 
+api.interceptors.response.use(
+  r => r.data,
+  e => Promise.reject(new Error(e.response?.data?.message || e.message || 'Request failed'))
+);
 
 // Auth
 export const login            = (d) => api.post('/auth/login', d);
