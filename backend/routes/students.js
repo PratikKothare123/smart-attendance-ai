@@ -4,7 +4,7 @@ const Student = require("../models/Student");
 const { protect, facultyOnly } = require("../middleware/auth");
 const router = express.Router();
 
-const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:5001";
+const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://13.61.27.255:5001";
 
 router.get("/", protect, async (req, res) => {
   try {

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Production-ready API config: uses REACT_APP_API_URL env (Vercel) or '/api' (local proxy)
 const api = axios.create({ 
-  baseURL: process.env.REACT_APP_API_URL || '/api' 
+  baseURL: process.env.REACT_APP_API_URL || '/api'
 });
 
 api.interceptors.request.use(cfg => {
@@ -11,10 +11,6 @@ api.interceptors.request.use(cfg => {
   return cfg;
 });
 
-api.interceptors.response.use(
-  r => r.data,
-  e => Promise.reject(new Error(e.response?.data?.message || e.message || 'Request failed'))
-);
 
 // Auth
 export const login            = (d) => api.post('/auth/login', d);

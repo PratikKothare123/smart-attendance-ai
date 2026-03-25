@@ -1,0 +1,9 @@
+tensorflow-cpu
+deepface
+opencv-python-headless
+pillow
+numpy
+fastapi
+uvicorn[standard]
+python-multipart
+gunicorn[standard]

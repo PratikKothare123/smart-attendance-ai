@@ -15,5 +15,8 @@
     "build": "react-scripts build"
   },
   "proxy": "http://localhost:5000",
-  "browserslist": { "production": [">0.2%"], "development": ["last 1 chrome version"] }
+  "browserslist": {
+    "production": [">0.2%"],
+    "development": ["last 1 chrome version"]
+  }
 }
